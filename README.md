@@ -6,6 +6,15 @@ This repository contains code for the [O'Reilly Live Online Training for Designi
 
 In this comprehensive course, machine learning engineers and software developers learn how to transition large language model (LLM) prototypes into fully deployed production systems. Through detailed instruction and real-world case studies, you explore the best practices for integrating LLMs into diverse workflows, ensuring that your models perform effectively in practical applications.
 
+## Repository Structure
+
+- `data/` — Example CSV datasets used in some notebooks
+- `deploy/` — Minimal FastAPI service for model inference, with `Dockerfile` and runtime `requirements.txt`
+- `images/` — Course/README images
+- `notebooks/` — Jupyter notebooks used throughout the course
+	- `crewai_streamlit/` — Streamlit app demonstrating CrewAI with `app.py`, its own `requirements.txt`, and an example `secrets.toml`
+- `requirements.txt` — Primary Python dependencies for running notebooks locally
+
 ## Setup Instructions
 
 ### Using Python 3.11 Virtual Environment
@@ -99,6 +108,16 @@ You might need to run this command to make the venv findable in jupyter
 python -m ipykernel install --user --name=oreilly-ai-pipelines --display-name "Python (oreilly-ai-pipelines)"
 ```
 
+### Installing Course Dependencies
+
+Install the main dependencies for notebooks:
+
+```bash
+pip install -r requirements.txt
+```
+
+Note: The `deploy/` service has its own minimal `requirements.txt` optimized for the API runtime. See the Deployment section below if you plan to run the FastAPI service.
+
 
 ## Notebooks
 
@@ -129,6 +148,79 @@ python -m ipykernel install --user --name=oreilly-ai-pipelines --display-name "P
 
 	- **[Working with llama.cpp and GGUF (no GPU)](https://colab.research.google.com/drive/15IC5cI-aFbpND5GrvKjAMas1Hmc7M6Rg?usp=sharing)** - See how to load a pre-quantized version of Llama to compare speed and memory usage
 	- **[Working with llama.cpp and GGUF (with a GPU)](https://colab.research.google.com/drive/1D6k-BeuF8YRTR8BGi2YYJrSOAZ6cYX8Y?usp=sharing)**
+
+## Running the FastAPI Inference Service (`deploy/`)
+
+The `deploy/` folder contains a minimal FastAPI app that loads a DistilBERT sequence classification model and exposes a `/predict` endpoint.
+
+### Local (Uvicorn)
+
+```bash
+cd deploy
+pip install -r requirements.txt
+uvicorn api:app --reload
+```
+
+Then open `http://localhost:8000/docs` to try the API.
+
+Notes:
+- The example model currently loads from the Hugging Face Hub. If you need access to a private model, make sure you are authenticated (e.g., `huggingface-cli login`) or configure a `HUGGING_FACE_HUB_TOKEN` in your environment.
+- For fully offline usage, you can modify `deploy/api.py` to load a local model directory instead of pulling from the Hub.
+
+### Docker
+
+```bash
+cd deploy
+docker build . --tag fastapi-demo:1
+# On Apple Silicon, you may need a specific platform:
+# docker build . --tag fastapi-demo:1 --platform linux/amd64
+
+docker run -p 80:8000 fastapi-demo:1
+# If you built with a custom platform, include it on run:
+# docker run -p 80:8000 --platform linux/amd64 fastapi-demo:1
+```
+
+Open `http://localhost/docs` to access the API docs.
+
+For more details (including Heroku container registry notes), see `deploy/README.md`.
+
+## Streamlit CrewAI Demo (`notebooks/crewai_streamlit/`)
+
+This small Streamlit app demonstrates building agents and tasks with CrewAI.
+
+### Setup
+
+```bash
+cd notebooks/crewai_streamlit
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Add your OpenAI key:
+- Preferred: create `.streamlit/secrets.toml` in this directory with:
+	```toml
+	[general]
+	OPENAI_API_KEY = "your-openai-api-key"
+	```
+- Alternatively, you can input the key in the UI at runtime.
+
+Run the app:
+
+```bash
+streamlit run app.py
+```
+
+An example `secrets.toml` is included for reference in `notebooks/crewai_streamlit/`.
+
+## Data
+
+Sample datasets used by notebooks are provided in `data/`. Not all notebooks require these files; consult each notebook’s instructions for expected inputs.
+
+## References
+
+- O’Reilly Live Training: Designing and Deploying LLM Pipelines — details, schedule, and outcomes:
+	- https://learning.oreilly.com/live-events/designing-and-deploying-llm-pipelines/0642572014796/
 
 ## Instructor
 
