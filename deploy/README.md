@@ -4,10 +4,21 @@
 
 1. Make sure you have FastAPI and uvicorn installed (it is in the requirements.txt)
 
+## Environment Variables
+
+The API requires a Hugging Face token to access the model. Set one of the following environment variables:
+
+- `HF_TOKEN` or `HUGGINGFACE_TOKEN`: Your Hugging Face access token
+
+Example:
+```bash
+export HF_TOKEN="your_huggingface_token_here"
+```
 
 ## Running the App
-1. From the `deploy` directory, run `uvicorn api:app  --reload` to start your local flask app
-2. Test the app by  going to [http://localhost:8000/docs](http://localhost:8000/docs)
+1. Set the `HF_TOKEN` or `HUGGINGFACE_TOKEN` environment variable (see above)
+2. From the `deploy` directory, run `uvicorn api:app  --reload` to start your local flask app
+3. Test the app by  going to [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## Using Docker
 
