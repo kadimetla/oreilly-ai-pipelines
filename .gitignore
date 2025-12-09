@@ -5,7 +5,8 @@ notebooks/clf/
 notebooks/clean/
 notebooks/drift_clf/
 deploy/clf/
-notebooks/crewai_streamlit/secrets.tomlnotebooks/db/
+notebooks/crewai_streamlit/secrets.toml
+notebooks/db/
 .venv/
 .venv/
 notebooks/db/
