@@ -1,5 +1,6 @@
 from typing import Dict
 from pydantic import BaseModel
+import os
 
 from fastapi import Depends, FastAPI
 
@@ -31,8 +32,11 @@ app = FastAPI()
 
 print("loading tokenizer + model")
 tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+
+# Get Hugging Face token from environment variable
+hf_token = os.getenv('HF_TOKEN') or os.getenv('HUGGINGFACE_TOKEN')
 sequence_classification_model = DistilBertForSequenceClassification.from_pretrained(
-    'profoz/deploy-mlops-demo', num_labels=3, use_auth_token='HF_TOKEN_REMOVED'
+    'profoz/deploy-mlops-demo', num_labels=3, token=hf_token
 )
     # TODO change to './clf/results' for local use
 
